@@ -1,6 +1,12 @@
 #!/bin/bash
 set -e
 
+if [ "$(id -u)" = "0" ]; then
+    usermod -u ${PUID:-1000} steam
+    groupmod -g ${PGID:-1000} steam
+    exec gosu steam "$0" "$@"
+fi
+
 echo "=== HumanitZ 서버 파일 업데이트 중... ==="
 steamcmd +force_install_dir /home/steam/serverfiles \
 	+login anonymous \
