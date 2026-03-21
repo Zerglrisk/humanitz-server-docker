@@ -8,7 +8,7 @@ steamcmd +force_install_dir /home/steam/serverfiles \
     +quit
 
 echo "=== 서버 설정 확인 중... ==="
-CONFIG_DIR="/home/steam/serverfiles/TSSGame/Saved/Config/LinuxServer"
+CONFIG_DIR="/home/steam/serverfiles/HumanitZServer/Saved/Config/LinuxServer"
 mkdir -p "$CONFIG_DIR"
 
 if [ ! -f "$CONFIG_DIR/GameServerSettings.ini" ]; then
@@ -114,8 +114,5 @@ fi
 
 echo "=== 서버 시작 ==="
 cd /home/steam/serverfiles
-chmod +x TSSGame/Binaries/Linux/TSSGameServer-Linux-Shipping
-exec ./TSSGame/Binaries/Linux/TSSGameServer-Linux-Shipping TSSGame \
-    -log \
-    -port=${PORT:-7778} \
-    -queryport=${QUERY_PORT:-27018}
+chmod +x HumanitZServer.sh
+exec ./HumanitZServer.sh -log -port=${PORT:-7778} -queryport=${QUERY_PORT:-27018}
