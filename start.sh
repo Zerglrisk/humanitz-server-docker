@@ -7,11 +7,13 @@ steamcmd +login anonymous \
     +app_update 2728330 -beta linuxbranch validate \
     +quit
 
-echo "=== 서버 설정 적용 중... ==="
+echo "=== 서버 설정 확인 중... ==="
 CONFIG_DIR="/home/steam/serverfiles/TSSGame/Saved/Config/LinuxServer"
 mkdir -p "$CONFIG_DIR"
 
-cat > "$CONFIG_DIR/GameServerSettings.ini" << EOF
+if [ ! -f "$CONFIG_DIR/GameServerSettings.ini" ]; then
+    echo "=== ini 파일 없음, 환경변수로 초기 생성 ==="
+    cat > "$CONFIG_DIR/GameServerSettings.ini" << EOF
 [Host Settings]
 ServerName="${SERVER_NAME:-HumanitZ [Dedicated]}"
 Password="${SERVER_PASSWORD:-}"
@@ -105,6 +107,10 @@ Weather_LightSnow=1
 Weather_Snow=1
 Weather_Blizzard=1
 EOF
+    echo "=== ini 파일 생성 완료 ==="
+else
+    echo "=== ini 파일 존재, 기존 설정 유지 ==="
+fi
 
 echo "=== 서버 시작 ==="
 cd /home/steam/serverfiles
