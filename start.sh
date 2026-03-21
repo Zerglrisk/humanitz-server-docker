@@ -2,8 +2,8 @@
 set -e
 
 echo "=== HumanitZ 서버 파일 업데이트 중... ==="
-steamcmd +login anonymous \
-    +force_install_dir /home/steam/serverfiles \
+steamcmd +force_install_dir /home/steam/serverfiles \
+	+login anonymous \
     +app_update 2728330 -beta linuxbranch validate \
     +quit
 
