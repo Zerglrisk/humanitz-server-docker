@@ -32,12 +32,12 @@ if [ ! -f "$CONFIG_DIR/GameServerSettings.ini" ]; then
 ServerName="${SERVER_NAME:-HumanitZ [Dedicated]}"
 Password="${SERVER_PASSWORD:-}"
 SaveName="${SAVE_NAME:-DedicatedSaveMP}"
-SearchID="HumanitZ_Dedicated"
+SearchID="${SEARCH_ID:-HumanitZ_Dedicated}"
 AdminPass="${ADMIN_PASSWORD:-}"
 MaxPlayers=${MAX_PLAYERS:-16}
 ReserveSlots=0
 RCONEnabled=${RCON_ENABLED:-false}
-RConPort=8889
+RConPort=8888
 RCONPass="${RCON_PASSWORD:-}"
 NoDeathFeedback=true
 NoJoinFeedback=true
@@ -45,7 +45,7 @@ LimitedSpawns=false
 UseGlobalBanList=true
 
 [World Settings]
-Version=35
+${VERSION:+Version=$VERSION}
 XpMultiplier=${XP_MULTIPLIER:-1}
 SaveIntervalSec=${SAVE_INTERVAL:-300}
 PermaDeath=${PERMA_DEATH:-false}
