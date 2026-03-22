@@ -4,6 +4,8 @@ set -e
 # root로 실행된 경우에만 유저 변경 후 재실행
 if [ "$(id -u)" = "0" ]; then
     echo "=== steam 유저 UID/GID 변경 ==="
+    # 그룹이 없으면 생성
+    getent group ${PGID:-1000} || groupadd -g ${PGID:-1000} steam
     usermod -u ${PUID:-1000} steam
     groupmod -g ${PGID:-1000} steam
     chown -R steam:steam /home/steam
