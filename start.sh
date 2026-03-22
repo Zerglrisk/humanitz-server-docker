@@ -129,4 +129,4 @@ fi
 echo "=== 서버 시작 ==="
 cd /home/steam/serverfiles
 chmod +x HumanitZServer.sh
-exec ./HumanitZServer.sh -log -port=${PORT:-7778} -queryport=${QUERY_PORT:-27018}
+exec ./HumanitZServer.sh -log -port=${PORT:-7777} -queryport=${QUERY_PORT:-27015}

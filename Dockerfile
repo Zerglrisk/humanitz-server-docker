@@ -10,8 +10,8 @@ COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
 # 포트는 환경변수 PORT, QUERY_PORT, RCON_PORT로 설정 가능
-EXPOSE 7778/udp
-EXPOSE 27018/udp
+EXPOSE 7777/udp
+EXPOSE 27015/udp
 EXPOSE 8888/tcp
 
 ENTRYPOINT ["/start.sh"]
