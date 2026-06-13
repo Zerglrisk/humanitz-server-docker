@@ -13,17 +13,6 @@ log_info()    { echo -e "[$(date '+%H:%M:%S')] ${GREEN}[HumanitZ/INFO]${NC} ${WH
 log_warn()    { echo -e "[$(date '+%H:%M:%S')] ${YELLOW}[HumanitZ/WARN]${NC} ${WHITE}$1${NC}"; }
 log_error()   { echo -e "[$(date '+%H:%M:%S')] ${RED}[HumanitZ/ERROR]${NC} ${WHITE}$1${NC}"; }
 
-echo -e "${CYAN}"
-echo "  _   _                              _ _   ____"
-echo " | | | |_   _ _ __ ___   __ _ _ __ (_) |_|_  /"
-echo " | |_| | | | | '_ \` _ \ / _\` | '_ \| | __/ / "
-echo " |  _  | |_| | | | | | | (_| | | | | | |_ / /_"
-echo " |_| |_|\__,_|_| |_| |_|\__,_|_| |_|_|\__/____|"
-echo -e "${NC}"
-echo -e "${WHITE} Dedicated Server${NC}"
-echo -e "${YELLOW} by Zerglrisk with Claude Sonnet 4.6${NC}"
-echo ""
-
 # root로 실행된 경우에만 유저 변경 후 재실행
 if [ "$(id -u)" = "0" ]; then
     log_info "Setting up user permissions (PUID=${PUID:-1000}, PGID=${PGID:-1000})..."
@@ -36,6 +25,18 @@ fi
 
 log_info "Running as: $(id)"
 
+echo -e "${CYAN}"
+echo "  _   _                              _ _   ____"
+echo " | | | |_   _ _ __ ___   __ _ _ __ (_) |_|_  /"
+echo " | |_| | | | | '_ \` _ \ / _\` | '_ \| | __/ / "
+echo " |  _  | |_| | | | | | | (_| | | | | | |_ / /_"
+echo " |_| |_|\__,_|_| |_| |_|\__,_|_| |_|_|\__/____|"
+echo -e "${NC}"
+echo -e "${WHITE} Dedicated Server${NC}"
+echo -e "${YELLOW} by Zerglrisk with Claude Sonnet 4.6${NC}"
+echo ""
+
+
 # 처음 설치 여부 확인
 REF_FILE="/home/steam/serverfiles/HumanitZServer/REF_GameServerSettings.ini"
 FIRST_INSTALL=false
@@ -45,6 +46,15 @@ fi
 
 # 업데이트 전 버전 저장
 BEFORE_VERSION=$(grep "^Version=" "$REF_FILE" 2>/dev/null | cut -d= -f2 | tr -d '\r' || echo "")
+
+# Steam 업데이트 캐시 복구 모드
+if [ "${STEAM_REPAIR:-false}" = "true" ]; then
+    log_warn "Steam repair mode enabled. Cleaning update cache..."
+    rm -f /home/steam/serverfiles/steamapps/appmanifest_2728330.acf
+    rm -rf /home/steam/serverfiles/steamapps/downloading/*
+    rm -rf /home/steam/serverfiles/steamapps/temp/*
+    log_info "Steam cache cleaned."
+fi
 
 log_info "Updating HumanitZ server files..."
 if [ "${STEAMCMD_DEBUG:-false}" = "true" ]; then
