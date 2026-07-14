@@ -46,28 +46,66 @@ fi
 
 # 업데이트 전 버전 저장
 BEFORE_VERSION=$(grep "^Version=" "$REF_FILE" 2>/dev/null | cut -d= -f2 | tr -d '\r' || echo "")
+repair_steam() {
+    log_warn "Cleaning Steam update cache..."
 
-# Steam 업데이트 캐시 복구 모드
-if [ "${STEAM_REPAIR:-false}" = "true" ]; then
-    log_warn "Steam repair mode enabled. Cleaning update cache..."
     rm -f /home/steam/serverfiles/steamapps/appmanifest_2728330.acf
     rm -rf /home/steam/serverfiles/steamapps/downloading/*
     rm -rf /home/steam/serverfiles/steamapps/temp/*
+
     log_info "Steam cache cleaned."
-fi
+}
+
+update_steam() {
+    set +e
+    if [ "${STEAM_REPAIR:-false}" = "true" ]; then
+        steamcmd \
+            +force_install_dir /home/steam/serverfiles \
+            +login anonymous \
+            +app_update 2728330 -beta linuxbranch validate \
+            +quit
+    else
+        steamcmd +force_install_dir "${INSTALL_DIR}" \
+            +login anonymous \
+            +app_update 2728330 -beta linuxbranch validate \
+            +quit 2>&1 | grep -E "^Error|^Failed|fully installed|up to date" || true
+    fi
+}
 
 log_info "Updating HumanitZ server files..."
-if [ "${STEAMCMD_DEBUG:-false}" = "true" ]; then
-    steamcmd +force_install_dir /home/steam/serverfiles \
-        +login anonymous \
-        +app_update 2728330 -beta linuxbranch validate \
-        +quit
-else
-    steamcmd +force_install_dir /home/steam/serverfiles \
-        +login anonymous \
-        +app_update 2728330 -beta linuxbranch validate \
-        +quit 2>&1 | grep -E "^Error|^Failed|fully installed|up to date" || true
+
+if ! update_steam; then
+    log_warn "Steam update failed. Attempting automatic repair..."
+
+    repair_steam
+
+    if ! update_steam; then
+        log_error "Steam update failed after automatic repair."
+        exit 1
+    fi
 fi
+
+# Steam 업데이트 캐시 복구 모드
+# if [ "${STEAM_REPAIR:-false}" = "true" ]; then
+#     log_warn "Steam repair mode enabled. Cleaning update cache..."
+#     rm -f /home/steam/serverfiles/steamapps/appmanifest_2728330.acf
+#     rm -rf /home/steam/serverfiles/steamapps/downloading/*
+#     rm -rf /home/steam/serverfiles/steamapps/temp/*
+#     log_info "Steam cache cleaned."
+# fi
+
+# log_info "Updating HumanitZ server files..."
+# if [ "${STEAMCMD_DEBUG:-false}" = "true" ]; then
+#     steamcmd +force_install_dir /home/steam/serverfiles \
+#         +login anonymous \
+#         +app_update 2728330 -beta linuxbranch validate \
+#         +quit
+# else
+#     steamcmd +force_install_dir /home/steam/serverfiles \
+#         +login anonymous \
+#         +app_update 2728330 -beta linuxbranch validate \
+#         +quit 2>&1 | grep -E "^Error|^Failed|fully installed|up to date" || true
+# fi
 
 # 업데이트 후 버전 확인
 AFTER_VERSION=$(grep "^Version=" "$REF_FILE" 2>/dev/null | cut -d= -f2 | tr -d '\r' || echo "")
